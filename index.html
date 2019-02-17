@@ -1,0 +1,250 @@
+<head>
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+
+<nav class='navbar navbar-default navbar-fixed-top'>
+	<div class='container'>
+		Somethings
+		
+	</div>
+</nav>
+<style>
+	.mg
+		{
+			margin-bottom: 5px;
+		}
+	span
+		{
+			/*border:2px solid black;*/
+			text-align: center;
+		}
+	.ll
+		{
+			text-align: left;
+		}
+	.rr
+		{
+			text-align: right;
+		}
+		.cc
+		{
+			text-align: center;
+		}
+		#ltabs
+			{
+				margin-left:100px;
+			}
+			/*
+		tr,th,td
+		{
+			border:1px solid black;
+		}*/
+
+
+				/*Added on 12 June 2018 */
+			  table#stab 
+              {
+                
+                background-color: #f1f1c1;
+              }
+              th
+              {
+              text-align: left;
+              }
+              table#stab tr td
+              	{
+              		text-align: center;
+              	}
+              table#stab tr:nth-child(even) 
+              {
+                background-color: #eee;
+              }
+              table#stab tr:nth-child(odd) 
+              {
+                background-color: #fff;
+              }
+              table#stab th 
+              {
+                color: white;
+                background-color: black;
+                text-align: center;
+              }
+	/*Added on 12 June 2018 */
+				table, th, td 
+				{
+			    border: 1px solid black;
+			     text-align: left;
+			    }
+				th
+				{
+					align:"left";
+				}
+				body
+				{
+					background-color: #42494c;
+				}
+
+
+</style>
+
+<script>
+	var accarray=[];
+	function spawnledgertables()
+		{
+			document.getElementById('ltabs').innerHTML='';
+			for(var i in accarray)
+				{
+					
+					if(parseInt(i)%2==1) continue;
+					var emptytab="<table class='col-lg-offset-1 col-lg-3 col-md-4 table-striped' >";
+					emptytab+="<tr><th colspan='4' class='cc'>"+accarray[i]+" account "+"</th></tr>";					
+					emptytab+="<tr> <td colspan='2'>Debit</td>  <td colspan='2'>Credit</td> </tr>";
+					var acc=accarray[i];
+					var dets=accarray[parseInt(i)+1];
+					
+					for(var j in dets)
+					{
+						if(parseInt(j)%3!=0) continue;
+						if(dets[j]=='d')
+							emptytab+="<tr> <td> To "+dets[parseInt(j)+2]+"</td><td>"+dets[parseInt(j)+1]+"</td> <td></td> <td></td></tr>";
+						else
+							emptytab+="<tr> <td></td> <td></td> <td> By"+dets[parseInt(j)+2]+"</td> <td>"+dets[parseInt(j)+1]+"</td></tr>";
+					}
+					emptytab+="</table>";
+
+					document.getElementById('ltabs').innerHTML+=emptytab;
+					
+				}
+		}
+	function workit()
+		{
+			var debAccount  = document.getElementById('dr').value;
+			var debAmount   = document.getElementById('db').value;
+			var credAccount = document.getElementById('cr').value;
+			var credAmount  = document.getElementById('cb').value;
+			var debok=false,credok=false;
+			for(var i in accarray)
+				{   
+				if(parseInt(i)%2==1) continue;
+
+				if(accarray[i]==debAccount)
+					{
+					accarray[parseInt(i)+1].push('d');
+					accarray[parseInt(i)+1].push(debAmount);
+					accarray[parseInt(i)+1].push(credAccount);
+					debok=true;
+					}
+				if(accarray[i]==credAccount)
+					{
+					accarray[parseInt(i)+1].push('c');
+					accarray[parseInt(i)+1].push(credAmount);
+					accarray[parseInt(i)+1].push(debAccount);
+					credok=true;
+					}
+				}
+			if (!credok)
+				{
+					accarray.push(credAccount);
+					accarray.push(['c',credAmount,debAccount]);					
+				}
+			if (!debok)
+				{
+					accarray.push(debAccount);
+					accarray.push(['d',debAmount,credAccount]);					
+				}
+
+			spawnledgertables();
+			createTrialBalance();
+		}
+
+		function createTrialBalance()
+			{
+				var emptytab="<table class='col-lg-offset-4 col-lg-3 col-md-4 table-striped' >";
+				emptytab+="<tr><th colspan='3' class='cc'>Trial Balance</th></tr>";
+				for(var i in accarray)
+				{
+					if(parseInt(i)%2!=0) continue;
+					var dets=accarray[parseInt(i)+1];
+					var dbal=0;
+					for (var j in dets)
+					{
+						if(parseInt(j)%3!=0) continue;
+						var transamt=dets[parseInt(j)+1];
+						var transtype=dets[j];
+						if(transtype=='d') 
+							dbal+=parseInt(transamt);
+						else
+							dbal-=parseInt(transamt);
+					}
+					if(dbal>0)
+					emptytab+="<tr><td>"+accarray[i]+"</td><td>"+dbal+"</td><td></td></tr>";
+					else
+						{
+							dbal*=-1;
+							emptytab+="<tr><td>"+accarray[i]+"</td><td></td><td>"+dbal+"</td></tr>";
+						}
+				}
+				emptytab+="</table>";
+				document.getElementById('tbal').innerHTML=emptytab;
+			}
+</script>
+
+</head>
+
+
+
+<body>
+	<div style='height: 10%;'></div>
+	<div class='row mg'>
+	<div class='col-lg-offset-1 col-lg-8'>
+		<div class='panel panel-primary'>
+			<div class='panel-heading'><div class='panel-title'>Make your Entries here</div></div>
+			<div class='panel-body'>
+				
+			 						<div class='row mg'>
+			 							<span class='col-lg-3 rr'> <input type='text' id='dr' name='dr'> </span>  
+			 							<span class='col-lg-3 ll'>account debtor</span>
+			 							<span class='col-lg-3'> <input type='text' id='db' name='db'> </span>
+			 						</div>
+			 						<div class='row mg'>
+			 							<span class='col-lg-1'>To</span>
+			 							<span class='col-lg-3 ll'> <input type='text' id='cr' name='cr'> </span>
+			 							<span class='col-lg-2 ll'>account</span>
+			 							<span class='col-lg-offset-3 col-lg-3'> <input type='text' id='cb' name='cb'> </span>
+			 						</div>
+			 						<div class='row mg'>
+			 							<span class='col-lg-offset-1 col-lg-1'>
+			 								<button type='button' id='submit' class='btn btn-primary' onclick='workit()'>
+			 									Log
+			 								</button>			 								
+			 							</span>
+			 						</div>
+			 	
+		    </div>
+			<!-- <div class='panel-footer'>Bottom</div> -->
+		</div>
+	</div>
+    </div>
+
+    <div class='col-lg-offset-1 col-lg-8'>
+    <div class='panel panel-primary'>
+    	<div class='panel-heading'><div class='panel-title cc'>Journal entries</div></div>
+			<div class='panel-body'>
+    			<div class='row mg' id='ltabs'></div>
+    		</div>
+    </div>
+	</div>
+
+
+	<div class='col-lg-offset-1 col-lg-8'>
+    <div class='panel panel-primary'>
+    	<div class='panel-heading'><div class='panel-title cc'>Trial Balance</div></div>
+			<div class='panel-body'>
+    			<div class='row mg' id='tbal'></div>
+		</div>
+	</div>
+	</div>
+
+</body>
